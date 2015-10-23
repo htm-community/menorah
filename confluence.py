@@ -19,7 +19,7 @@ class Confluence(object):
 
 
   def _createStreams(self):
-    client = RiverViewClient(debug=True)
+    client = RiverViewClient(debug=False)
     for dataId in self._dataIds:
       self._streams.append(
         RiverStream(

@@ -28,4 +28,11 @@ class Menorah(object):
 
 
   def stream(self, handler):
-    pass
+    confluence = confluencefactory.create(
+      self._streamIds,
+      since=self._since,
+      limit=self._limit
+    )
+    headers = ["datetime"] + [":".join(header) for header in self._streamIds]
+    for row in confluence:
+      handler(headers, row)

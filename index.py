@@ -28,16 +28,16 @@ startAt = datetime(2015, 9, 7)
 
 menorah = Menorah(dataIds, since=startAt, limit=5000)
 
-# Prototype for writing all data rows to CSV.
-menorah.writeCsv("just-a-test.csv")
+writeCsv = False
 
-print "Done writing CSV, see just-a-test.csv"
+if writeCsv:
+  # Prototype for writing all data rows to CSV.
+  menorah.writeCsv("just-a-test.csv")
+  print "Done writing CSV, see just-a-test.csv"
 
-
-# Prototype for streaming all data into a function.
-def handleRow(headers, data):
-  print headers
-  print data
-
-menorah.stream(handleRow)
-
+else:
+  # Prototype for streaming all data into a function.
+  def handleRow(headers, data):
+    print ",".join([str(d) for d in data])
+  
+  menorah.stream(handleRow)
