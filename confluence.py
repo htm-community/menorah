@@ -1,57 +1,58 @@
+from riverpy import RiverViewClient
+
 from riverstream import RiverStream
+
 
 class Confluence(object):
 
 
-  def __init__(self, dataIds, since=None, until=None):
+  def __init__(self, dataIds, since=None, until=None, limit=None):
     self._dataIds = dataIds
     self._since = since
     self._until = until
+    self._limit = limit
     self._streams = []
 
 
+  def __iter__(self):
+    return self
+
+
   def _createStreams(self):
+    client = RiverViewClient(debug=True)
     for dataId in self._dataIds:
-      self._streams.append(RiverStream(dataId))
+      self._streams.append(
+        RiverStream(
+          client, dataId, 
+          since=self._since, 
+          until=self._until, 
+          limit=self._limit
+        )
+      )
 
 
   def _loadData(self):
-    for stream in self._streams:
-      stream.load()
-
-
-  def _alignStreams(self):
-    # If any streams are maxed out, chop off all other data cursors at the
-    # same "until" time so they are all aligned
-    maxedOut = [stream.isMaxedOut() for stream in self._streams]
-    
-    # Adjust the "until" time property on this instance to reflect the new 
-    # state.
-    
-    pass
+    [stream.load() for stream in self._streams]
 
 
   def load(self):
     self._createStreams()
     self._loadData()
-    self._alignStreams()
 
 
-  def _loadNext(self):
-    # Get new data cursor for each stream one time step into the future.
-    pass
-
-
-  def nextRow(self):
-    if self.isEmpty():
-      self._loadNext()
+  def next(self):
+    if self._isEmpty():
+      raise StopIteration
     
     # Peek at next item in each data stream and pick the earliest value to lead
     # the next row of data
-    times = [stream.getTime() for stream in self._streams]
-    
-    # Create output row with dummy values for missing data and return.
+    earliest = min([stream.getTime() for stream in self._streams])
+    timeString = earliest.strftime("%Y-%m-%d %H:%M:%S")
+    rowData = [stream.advance(earliest) for stream in self._streams]
+    out = [timeString] + rowData
+    return out
 
 
-  def isEmpty(self):
-    pass
+  def _isEmpty(self):
+    smallest = min([len(stream) for stream in self._streams])
+    return smallest is 0
