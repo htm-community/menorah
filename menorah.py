@@ -30,28 +30,29 @@ class Menorah(object):
     return self._confluence.createFieldDescriptions()
 
 
-  def writeSwarmDef(self, csvPath, outPath, predictedField):
-    if self._confluence is None:
-      raise Exception("Cannot write swarm description without first writing "
-                      "input CSV.");
-    fields = self._createFieldDescription()
-    swarmDesc = createSwarmDescription(fields, csvPath, predictedField)
-    with open(outPath, "w") as swarmOut:
-      swarmOut.write(json.dumps(swarmDesc))
-
-
   def writeCsv(self, path):
     self._createConfluence()
     with open(path, "w") as outputFile:
       writer = csv.writer(outputFile)
       headers = self.getStreamIds()
-      flags = ['T'] + ['' for h in headers]
-      types = ['datetime'] + ['float' for h in headers]
-      writer.writerow(["datetime"] + headers)
+      fieldNames = ["timestamp"] + headers
+      flags = ["T"] + ["" for h in headers]
+      types = ["datetime"] + ["float" for h in headers]
+      writer.writerow(fieldNames)
       writer.writerow(types)
       writer.writerow(flags)
       for row in self._confluence:
         writer.writerow(row)
+
+
+  def writeSwarmDef(self, csvPath, outPath, predictedField):
+    if self._confluence is None:
+      raise Exception("Cannot write swarm description without first writing "
+                      "input CSV.")
+    fields = self._createFieldDescription()
+    swarmDesc = createSwarmDescription(fields, csvPath, predictedField)
+    with open(outPath, "w") as swarmOut:
+      swarmOut.write(json.dumps(swarmDesc))
 
 
   def stream(self, handler):
