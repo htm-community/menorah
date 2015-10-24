@@ -1,3 +1,24 @@
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have an agreement
+# with Numenta, Inc., for a separate license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Affero Public License for more details.
+#
+# You should have received a copy of the MIT License along with this 
+# program.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
 from datetime import datetime
 
 
@@ -25,6 +46,7 @@ class RiverStream(object):
     self._lastValue = DEFAULT_LAST_VALUE
     self._min = None
     self._max = None
+    self._dataType = "int"
 
 
   def __len__(self):
@@ -92,6 +114,9 @@ class RiverStream(object):
     
     self._updateMinMax(out)
     
+    if isinstance(out, float):
+      self._dataType = "float"
+    
     return out
 
 
@@ -109,7 +134,7 @@ class RiverStream(object):
   def createFieldDescription(self):
     return {
       "fieldName": self.getName(),
-      "fieldType": "float",
+      "fieldType": self._dataType,
       "minValue": self._min,
       "maxValue": self._max
     }

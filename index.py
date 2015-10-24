@@ -24,22 +24,26 @@ dataIds =  [
   ["airnow", "Brownsville-McAllen, TX", "Ozone"],
 ]
 
-startAt = datetime(2015, 8, 1)
+startAt = datetime(2015, 10, 10)
 
 menorah = Menorah(dataIds, since=startAt)
 
-writeCsv = True
+doSwarm = True
 
-if writeCsv:
-  # Prototype for writing all data rows to CSV.
-  menorah.writeCsv("just-a-test.csv")
-  print "Done writing CSV, see just-a-test.csv"
-  # Prototype to write swarm def.
-  menorah.writeSwarmDef(
-    "just-a-test.csv",
-    "swarm_def.json", 
-    "ercot-demand system_wide_demand Demand"
-  )
+if doSwarm:
+  menorah.prepareSwarm("work/just-a-test")
+  
+  # # Prototype for writing all data rows to CSV.
+  # menorah.writeCsv("just-a-test.csv")
+  # print "Done writing CSV, see just-a-test.csv"
+  # # Prototype to write swarm def.
+  # menorah.writeSwarmDef(
+  #   "just-a-test.csv",
+  #   "swarm_def.json", 
+  #   predictedField="ercot-demand system_wide_demand Demand"
+  # )
+  
+  menorah.runSwarm("work/just-a-test")
 
 else:
   # Prototype for streaming all data into a function.
