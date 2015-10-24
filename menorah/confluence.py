@@ -26,6 +26,11 @@ from riverstream import RiverStream
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 class Confluence(object):
+  """
+  A collection of River Streams from River View. This class will create data 
+  streams across any number of River Streams, allowing you to stream them into
+  a function or write all the data to CSV for swarming and running NuPIC models.
+  """
 
 
   def __init__(self, dataIds, since=None, until=None, limit=None):

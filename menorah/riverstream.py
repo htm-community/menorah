@@ -38,7 +38,7 @@ class RiverStream(object):
     self._dataHandle = None
     self._data = []
     self._headers = []
-    # The cursor is the position next value.
+    # The cursor is the position for the next value.
     self._cursor = 0
     self._since = since
     self._until = until
@@ -72,6 +72,9 @@ class RiverStream(object):
 
 
   def load(self):
+    """
+    Loads this stream by calling River View for data.
+    """
     print "Loading data for %s..." % self.getName()
     self._dataHandle = self._stream.data(
       since=self._since, until=self._until, limit=self._limit
@@ -82,6 +85,10 @@ class RiverStream(object):
 
 
   def next(self):
+    """
+    Returns the next data value.
+    :return: (float|int) the next data value
+    """
     out = self.peek()[self._headers.index(self._field)]
     self._cursor += 1
     if out is not None:
@@ -90,16 +97,30 @@ class RiverStream(object):
 
 
   def last(self):
+    """
+    Returns the data value before the one coming next.
+    :return: (float|int) last data value
+    """
     return self._lastValue
 
 
   def peek(self):
+    """
+    Returns the next data value without advancing.
+    :return: (float|int) last next value
+    """
     if len(self) is 0:
       raise Exception("RiverStream object is empty!")
     return self._data[self._cursor]
 
 
   def advance(self, myDateTime):
+    """
+    Advances to the next value and returns an appropriate value for the given
+    time.
+    :param myDateTime: (datetime) when to fetch the value for 
+    :return: (float|int) value for given time
+    """
     if self.getTime() == myDateTime:
       out =  self.next()
       # Sometimes, the stream has no value for this field and returns None, in 
@@ -121,10 +142,18 @@ class RiverStream(object):
 
 
   def getName(self):
+    """
+    Gets the id for this stream.
+    :return: (string)
+    """
     return " ".join(self._id)
 
 
   def getTime(self):
+    """
+    Gets the time for the next data point.
+    :return: (datetime)
+    """
     headers = self._headers
     timeStringIndex = headers.index("datetime")
     timeString = self.peek()[timeStringIndex]
@@ -132,6 +161,10 @@ class RiverStream(object):
 
 
   def createFieldDescription(self):
+    """
+    Provides a field description dict for swarm description.
+    :return: (dict)
+    """
     return {
       "fieldName": self.getName(),
       "fieldType": self._dataType,

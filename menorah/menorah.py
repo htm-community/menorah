@@ -54,6 +54,15 @@ class Menorah(object):
 
 
   def __init__(self, dataIds, since=None, limit=5000):
+    """
+    Creates a new Menorah instance.
+    :param dataIds: (list) Each data id in this list is a list of strings:
+                    1. river name
+                    2. stream name
+                    3. field name
+    :param since: (datetime) when to start the data fetch
+    :param limit: (int) how many rows of data to get initially
+    """
     self._streamIds = dataIds
     self._since = since
     self._limit = limit
@@ -68,15 +77,23 @@ class Menorah(object):
     )
 
 
-  def getStreamIds(self):
-    return self._confluence.getStreamIds()
-
-
   def _createFieldDescription(self):
     return self._confluence.createFieldDescriptions()
 
 
+  def getStreamIds(self):
+    """
+    Gets all the stream ids that Menorah was created with.
+    :return: list of stream id strings
+    """
+    return self._confluence.getStreamIds()
+
+
   def writeCsv(self, path):
+    """
+    Writes data one or many streams into one CSV file.
+    :param path: absolute or relative file path
+    """
     self._createConfluence()
     with open(path, "w") as outputFile:
       writer = csv.writer(outputFile)
@@ -91,11 +108,18 @@ class Menorah(object):
         writer.writerow(row)
 
 
-  def writeSwarmDef(self, csvPath, outPath, 
+  def writeSwarmDescription(self, csvPath, outPath, 
                     predictedField=None, swarmParams=None):
+    """
+    Writes swarm description file (JSON).
+    :param csvPath: path to CSV data
+    :param outPath: absolute or relative file path to write swarm JSON file 
+    :param predictedField: (string)
+    :param swarmParams: (dict) overrides any swarm params
+    """
     if self._confluence is None:
-      raise Exception("Cannot write swarm description without first writing "
-                      "input CSV.")
+      raise Exception("Missing Confluence! Cannot attempt operation requiring "
+                      "data without first loading the data.")
     if predictedField is None:
       predictedField = self.getStreamIds()[0]
     fields = self._createFieldDescription()
@@ -106,29 +130,58 @@ class Menorah(object):
       swarmOut.write(json.dumps(swarmDesc))
 
 
-  def prepareSwarm(self, path, predictedField=None, swarmParams=None):
-    workingDir = createDir(path)
-    csvPath = os.path.join(workingDir, "data.csv")
+  def prepareSwarm(self, workingDirPath, predictedField=None, swarmParams=None):
+    """
+    Gathers data from streams into local CSV file, then creates a swarm 
+    description for it. 
+    :param workingDirPath: Path to directory to write data and swarm files 
+    :param predictedField: (string)
+    :param swarmParams: (dict) overrides any swarm params
+    """
+    workingDirPath = createDir(workingDirPath)
+    csvPath = os.path.join(workingDirPath, "data.csv")
     self.writeCsv(csvPath)
-    swarmDescriptionPath = os.path.join(workingDir, "swarm_description.json")
-    self.writeSwarmDef(
+    swarmDescriptionPath = os.path.join(
+      workingDirPath, "swarm_description.json"
+    )
+    self.writeSwarmDescription(
       csvPath, swarmDescriptionPath, 
       predictedField=predictedField, swarmParams=swarmParams
     )
 
 
-  def runSwarm(self, path):
-    if not os.path.exists(path):
-      raise Exception("Working directory %s does not exist!" % path)
-    swarm(path)
+  def runSwarm(self, workingDirPath):
+    """
+    Runs a swarm with data within a working directory. This assumes that the 
+    user has already run prepareSwarm().
+    :param workingDirPath: absolute or relative path to working directory
+    """
+    if not os.path.exists(workingDirPath):
+      raise Exception("Working directory %s does not exist!" % workingDirPath)
+    swarm(workingDirPath)
 
 
-  def swarm(self, path, predictedField=None, swarmParams=None):
-    self.prepareSwarm(path, predictedField=predictedField, swarmParams=swarmParams)
-    self.runSwarm(path)
+  def swarm(self, workingDirPath, predictedField=None, swarmParams=None):
+    """
+    Runs a swarm on data and swarm description found within the given working
+    directory.
+    :param workingDirPath: absolute or relative path to working directory
+    :param predictedField: (string)
+    :param swarmParams: (dict) overrides any swarm params
+    :return:
+    """
+    self.prepareSwarm(
+      workingDirPath, predictedField=predictedField, swarmParams=swarmParams
+    )
+    self.runSwarm(workingDirPath)
 
 
   def stream(self, handler):
+    """
+    Fetches data from river streams and feeds them into the given function.
+    :param handler: (function) passed headers [list] and row [list] of the data
+                    for one time step, for every row of data
+    """
     self._createConfluence()
     headers = ["datetime"] + self.getStreamIds()
     for row in self._confluence:

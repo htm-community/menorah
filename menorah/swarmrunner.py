@@ -64,6 +64,12 @@ def _printSwarmSizeWarning(size):
 
 
 def swarm(workingDir):
+  """
+  Runs a swarm in the giving working directory, assuming it was created by 
+  Menorah.
+  :param workingDir: absolute or relative path to working directory created by
+                     Menorah
+  """
   name = os.path.splitext(os.path.basename(workingDir))[0]
   swarmDescriptionFile = os.path.join(workingDir, "swarm_description.json")
   with open(swarmDescriptionFile) as swarmDesc:
