@@ -164,7 +164,11 @@ class Menorah(object):
   def swarm(self, workingDirPath, predictedField=None, swarmParams=None):
     """
     Runs a swarm on data and swarm description found within the given working
-    directory.
+    directory. 
+    
+    If no predictedField is provided, it is assumed that the first stream listed
+    in the streamIds provided to the Menorah constructor is the predicted field.
+    
     :param workingDirPath: absolute or relative path to working directory
     :param predictedField: (string)
     :param swarmParams: (dict) overrides any swarm params
