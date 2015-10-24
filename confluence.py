@@ -2,6 +2,7 @@ from riverpy import RiverViewClient
 
 from riverstream import RiverStream
 
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 class Confluence(object):
 
@@ -47,7 +48,7 @@ class Confluence(object):
     # Peek at next item in each data stream and pick the earliest value to lead
     # the next row of data
     earliest = min([stream.getTime() for stream in self._streams])
-    timeString = earliest.strftime("%Y-%m-%d %H:%M:%S")
+    timeString = earliest.strftime(DATE_FORMAT)
     rowData = [stream.advance(earliest) for stream in self._streams]
     out = [timeString] + rowData
     return out
@@ -56,3 +57,11 @@ class Confluence(object):
   def _isEmpty(self):
     smallest = min([len(stream) for stream in self._streams])
     return smallest is 0
+
+
+  def createFieldDescriptions(self):
+    return [stream.createFieldDescription() for stream in self._streams]
+
+
+  def getStreamIds(self):
+    return [str(stream) for stream in self._streams]

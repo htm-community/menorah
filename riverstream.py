@@ -23,6 +23,8 @@ class RiverStream(object):
     self._until = until
     self._limit = limit
     self._lastValue = DEFAULT_LAST_VALUE
+    self._min = None
+    self._max = None
 
 
   def __len__(self):
@@ -30,7 +32,7 @@ class RiverStream(object):
 
 
   def _fetchNextData(self):
-    print "Loading next data cursor for %s..." % ":".join(self._id)
+    print "Loading next data cursor for %s..." % self.getName()
     self._dataHandle = self._dataHandle.next()
     self._cursor = 0
     self._data = self._dataHandle.data()
@@ -38,8 +40,17 @@ class RiverStream(object):
     print "Loaded %i rows." % len(self)
 
 
+  def _updateMinMax(self, value):
+    min = self._min
+    max = self._max
+    if min is None or value < min:
+      self._min = value
+    if max is None or value > max:
+      self._max = value
+
+
   def load(self):
-    print "Loading data for %s..." % ":".join(self._id)
+    print "Loading data for %s..." % self.getName()
     self._dataHandle = self._stream.data(
       since=self._since, until=self._until, limit=self._limit
     )
@@ -57,10 +68,7 @@ class RiverStream(object):
 
 
   def last(self):
-    out = self._lastValue
-    if out is None:
-      print "AHA!"
-    return out
+    return self._lastValue
 
 
   def peek(self):
@@ -81,12 +89,31 @@ class RiverStream(object):
     # If there's no more data, we must fetch more
     if len(self) is 0:
       self._fetchNextData()
+    
+    self._updateMinMax(out)
+    
     return out
+
+
+  def getName(self):
+    return " ".join(self._id)
 
 
   def getTime(self):
     headers = self._headers
     timeStringIndex = headers.index("datetime")
     timeString = self.peek()[timeStringIndex]
-    # print "%s: %s" % (":".join(self._id), timeString)
     return  datetime.strptime(timeString, "%Y/%m/%d %H:%M:%S")
+
+
+  def createFieldDescription(self):
+    return {
+      "fieldName": self.getName(),
+      "fieldType": "float",
+      "minValue": self._min,
+      "maxValue": self._max
+    }
+
+
+  def __str__(self):
+    return self.getName()
