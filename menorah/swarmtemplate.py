@@ -1,3 +1,4 @@
+import os
 import copy
 
 
@@ -40,11 +41,13 @@ FIELD = {
   "minValue": None
 }
 
-def createSwarmDescription(fields, csvPath, predictedField):
+def createSwarmDescription(fields, csvPath, predictedField, swarmParams=None):
   swarmDesc = copy.deepcopy(SWARM_DESCRIPTION)
   swarmDesc["includedFields"] = swarmDesc["includedFields"] + fields
   swarmDesc["inferenceArgs"]["predictedField"] = predictedField
   outStream = swarmDesc["streamDef"]["streams"][0]
   outStream["info"] = csvPath
-  outStream["source"] = outStream["source"] + csvPath
+  outStream["source"] = outStream["source"] + os.path.abspath(csvPath)
+  if swarmParams is not None:
+    swarmDesc.update(swarmParams)
   return swarmDesc

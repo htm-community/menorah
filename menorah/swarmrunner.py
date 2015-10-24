@@ -14,24 +14,28 @@ def _modelParamsToString(modelParams):
   return pp.pformat(modelParams)
 
 
+def touch(fname, times=None):
+  with open(fname, 'a'):
+    os.utime(fname, times)
 
-def _writeModelParamsToFile(modelParams, name):
-  cleanName = name.replace(" ", "_").replace("-", "_")
-  paramsName = "%s_model_params.py" % cleanName
-  outDir = os.path.join(os.getcwd(), 'model_params')
+
+def _writeModelParamsToFile(modelParams, workingDir):
+  paramsName = "model_params.py"
+  outDir = os.path.join(workingDir, 'model_params')
   if not os.path.isdir(outDir):
     os.mkdir(outDir)
-  outPath = os.path.join(os.getcwd(), 'model_params', paramsName)
+  outPath = os.path.join(workingDir, 'model_params', paramsName)
   with open(outPath, "wb") as outFile:
     modelParamsString = _modelParamsToString(modelParams)
     outFile.write("MODEL_PARAMS = \\\n%s" % modelParamsString)
+  touch(os.path.join(outDir, "__init__.py"))
   return outPath
 
 
 
-def _swarmForBestModelParams(swarmConfig, name, maxWorkers=4):
+def _swarmForBestModelParams(swarmConfig, name, workingDir, maxWorkers=4):
   outputLabel = name
-  permWorkDir = os.path.abspath('swarm')
+  permWorkDir = os.path.join(workingDir, "swarm")
   if not os.path.exists(permWorkDir):
     os.mkdir(permWorkDir)
   modelParams = permutations_runner.runWithConfig(
@@ -42,7 +46,7 @@ def _swarmForBestModelParams(swarmConfig, name, maxWorkers=4):
     permWorkDir=permWorkDir,
     verbosity=0
   )
-  modelParamsFile = _writeModelParamsToFile(modelParams, name)
+  modelParamsFile = _writeModelParamsToFile(modelParams, workingDir)
   return modelParamsFile
 
 
@@ -68,7 +72,7 @@ def swarm(workingDir):
   print "= Swarming on %s data..." % name
   _printSwarmSizeWarning(swarmDescription["swarmSize"])
   print "================================================="
-  modelParams = _swarmForBestModelParams(swarmDescription, name)
+  modelParams = _swarmForBestModelParams(swarmDescription, name, workingDir)
   print "\nWrote the following model param files:"
   print "\t%s" % modelParams
 

@@ -91,30 +91,41 @@ class Menorah(object):
         writer.writerow(row)
 
 
-  def writeSwarmDef(self, csvPath, outPath, predictedField=None):
+  def writeSwarmDef(self, csvPath, outPath, 
+                    predictedField=None, swarmParams=None):
     if self._confluence is None:
       raise Exception("Cannot write swarm description without first writing "
                       "input CSV.")
     if predictedField is None:
       predictedField = self.getStreamIds()[0]
     fields = self._createFieldDescription()
-    swarmDesc = createSwarmDescription(fields, csvPath, predictedField)
+    swarmDesc = createSwarmDescription(
+      fields, csvPath, predictedField, swarmParams=swarmParams
+    )
     with open(outPath, "w") as swarmOut:
       swarmOut.write(json.dumps(swarmDesc))
 
 
-  def prepareSwarm(self, path):
+  def prepareSwarm(self, path, predictedField=None, swarmParams=None):
     workingDir = createDir(path)
     csvPath = os.path.join(workingDir, "data.csv")
     self.writeCsv(csvPath)
     swarmDescriptionPath = os.path.join(workingDir, "swarm_description.json")
-    self.writeSwarmDef(csvPath, swarmDescriptionPath)
+    self.writeSwarmDef(
+      csvPath, swarmDescriptionPath, 
+      predictedField=predictedField, swarmParams=swarmParams
+    )
 
 
   def runSwarm(self, path):
     if not os.path.exists(path):
       raise Exception("Working directory %s does not exist!" % path)
     swarm(path)
+
+
+  def swarm(self, path, predictedField=None, swarmParams=None):
+    self.prepareSwarm(path, predictedField=predictedField, swarmParams=swarmParams)
+    self.runSwarm(path)
 
 
   def stream(self, handler):
