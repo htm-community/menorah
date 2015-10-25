@@ -138,6 +138,12 @@ class RiverStream(object):
     if isinstance(out, float):
       self._dataType = "float"
     
+    # Convert to proper data type
+    if self._dataType is "float":
+      out = float(out)
+    else:
+      out = int(out)
+
     return out
 
 

@@ -24,22 +24,16 @@ dataIds =  [
   # ["airnow", "Brownsville-McAllen, TX", "Ozone"],
 ]
 
-startAt = datetime(2015, 1, 1)
+startAt = datetime(2015, 10, 15)
 
-menorah = Menorah(dataIds, since=startAt, limit=5000)
+menorah = Menorah(dataIds, since=startAt, limit=500)
 
-runNupic = True
+runNupic = False
 
 if runNupic:
   menorah.swarm(
     "work/traffic", 
     swarmParams={"swarmSize": "small"}
   )
-  menorah.runModel("work/traffic")
-
 else:
-  # Prototype for streaming all data into a function.
-  def handleRow(headers, data):
-    print ",".join([str(d) for d in data])
-
-  menorah.stream(handleRow)
+  menorah.runModel("work/traffic")

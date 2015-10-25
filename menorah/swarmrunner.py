@@ -46,8 +46,8 @@ def _swarmForBestModelParams(swarmConfig, name, workingDir, maxWorkers=4):
     permWorkDir=permWorkDir,
     verbosity=0
   )
-  modelParamsFile = _writeModelParamsToFile(modelParams, workingDir)
-  return modelParamsFile
+  _writeModelParamsToFile(modelParams, workingDir)
+  return modelParams
 
 
 
@@ -79,6 +79,5 @@ def swarm(workingDir):
   _printSwarmSizeWarning(swarmDescription["swarmSize"])
   print "================================================="
   modelParams = _swarmForBestModelParams(swarmDescription, name, workingDir)
-  print "\nWrote the following model param files:"
-  print "\t%s" % modelParams
+  return modelParams
 

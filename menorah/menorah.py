@@ -27,6 +27,7 @@ import json
 import confluencefactory
 from swarmtemplate import createSwarmDescription
 from swarmrunner import swarm
+import modelrunner
 
 
 # http://stackoverflow.com/a/600612/154560
@@ -67,14 +68,19 @@ class Menorah(object):
     self._since = since
     self._limit = limit
     self._confluence = None
+    self._modelParams = None
+    self._predictedField = None
 
 
   def _createConfluence(self):
+    if self._confluence is not None: 
+      return
     self._confluence = confluencefactory.create(
       self._streamIds,
       since=self._since,
       limit=self._limit
     )
+    self._predictedField = self.getStreamIds()[0]
 
 
   def _createFieldDescription(self):
@@ -98,7 +104,7 @@ class Menorah(object):
     with open(path, "w") as outputFile:
       writer = csv.writer(outputFile)
       headers = self.getStreamIds()
-      fieldNames = ["timestamp"] + headers
+      fieldNames = ["datetime"] + headers
       flags = ["T"] + ["" for h in headers]
       types = ["datetime"] + ["float" for h in headers]
       writer.writerow(fieldNames)
@@ -121,7 +127,7 @@ class Menorah(object):
       raise Exception("Missing Confluence! Cannot attempt operation requiring "
                       "data without first loading the data.")
     if predictedField is None:
-      predictedField = self.getStreamIds()[0]
+      predictedField = self._predictedField
     fields = self._createFieldDescription()
     swarmDesc = createSwarmDescription(
       fields, csvPath, predictedField, swarmParams=swarmParams
@@ -158,7 +164,7 @@ class Menorah(object):
     """
     if not os.path.exists(workingDirPath):
       raise Exception("Working directory %s does not exist!" % workingDirPath)
-    swarm(workingDirPath)
+    self._modelParams = swarm(workingDirPath)
 
 
   def swarm(self, workingDirPath, predictedField=None, swarmParams=None):
@@ -178,6 +184,17 @@ class Menorah(object):
       workingDirPath, predictedField=predictedField, swarmParams=swarmParams
     )
     self.runSwarm(workingDirPath)
+
+
+  def runModel(self, workingDirPath):
+    self._createConfluence()
+    handler = modelrunner.getRowHandler(
+      workingDirPath, 
+      self._predictedField, 
+      modelParams=self._modelParams, 
+      plot=False
+    )
+    self.stream(handler)
 
 
   def stream(self, handler):
