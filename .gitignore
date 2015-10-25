@@ -1,5 +1,9 @@
 .idea/
 .cache/
+menorah.egg-info/
+
+build/
+dist/
 
 *.pyc
 *.csv

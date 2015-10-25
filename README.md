@@ -4,29 +4,53 @@
 
 It's easy to run [NuPIC](http://github.com/numenta/nupic) on live real-world data with Menorah. Menorah's data is powered by [River View](http://data.numenta.org), which is a [NuPIC Community](http://github.com/nupic-community/river-view) temporal data store.
  
-## Find Data
+## Data delivered directly to NuPIC
 
-Take the data feed [`http://data.numenta.org/ercot-demand/system_wide_demand/data.html`](http://data.numenta.org/ercot-demand/system_wide_demand/data.html)...
+To stream data from River View into NuPIC, you need to know the `river`, `stream`, and `field` for each data feed. 
 
-The pattern is `/<river-name>/<stream-name>/data.[json|html|csv]`, so we can create, swarm, and run a NuPIC model on this data stream easily.
+Take the data feed [`http://data.numenta.org/ercot-demand/system_wide_demand/data.html`](http://data.numenta.org/ercot-demand/system_wide_demand/data.html):
+
+The pattern is `/<river>/<stream>/data.html`. To find the `field`, look at [River View HTML interface](http://data.numenta.org/ercot-demand/system_wide_demand/data.html) to decide what data field is desired. 
+
+Each one is a list `[river, stream, field]`, and they are provided to the `Menora` constructor in a list. For example:
 
 ```python
 from menorah import Menorah
 
-experimentDir = "nupic-experiments/ercot"
 sources = [
   ["ercot-demand", "system_wide_demand", "Demand"],
 ]
 
-menorah = Menorah(sources, experimentDir)
+menorah = Menorah(sources, "experiments/")
 menorah.swarm()
 menorah.runModel()
 ```
 
-## Coming Soon
+## Working Directory
 
-setuptools
+Menorah needs a working directory, because NuPIC writes artifacts to the file system. Pass in a path to a working folder for menorah experiments.
+
+## Run multiple fields
+
+I recommend running less than 8 fields in a single model, but you can configure as many as you wish. 
+
+```python
+from menorah import Menorah
+
+sources =  [
+  ["ercot-demand", "system_wide_demand", "Demand"],
+  ["airnow", "Austin, TX", "Ozone"],
+  ["airnow", "Beaumont-Port Arthur, TX", "Ozone"],
+  ["airnow", "Brownsville-McAllen, TX", "Ozone"],
+]
+
+menorah = Menorah(sources, "work/traffic")
+menorah.swarm()
+menorah.runModel()
+```
+
+# Where's the Output?
 
 Writing output to a file would be nice.
 
-Visualizations?
+Plotting output would be better.
