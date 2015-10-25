@@ -22,3 +22,9 @@ menorah = Menorah(sources, experimentDir)
 menorah.swarm()
 menorah.runModel()
 ```
+
+## Coming Soon
+
+Writing output to a file would be nice.
+
+Visualizations?
