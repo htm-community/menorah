@@ -25,6 +25,8 @@ menorah.runModel()
 
 ## Coming Soon
 
+setuptools
+
 Writing output to a file would be nice.
 
 Visualizations?
