@@ -4,11 +4,11 @@ from menorah import Menorah
 
 
 dataIds =  [
+  ["mn-traffic-sensors", "670", "occupancy"],
   ["mn-traffic-sensors", "618", "occupancy"],
   ["mn-traffic-sensors", "678", "occupancy"],
   ["mn-traffic-sensors", "730", "occupancy"],
   ["mn-traffic-sensors", "677", "occupancy"],
-  ["mn-traffic-sensors", "670", "occupancy"],
   ["mn-traffic-sensors", "731", "occupancy"],
   ["mn-traffic-sensors", "727", "occupancy"],
   ["mn-traffic-sensors", "728", "occupancy"],
@@ -26,14 +26,10 @@ dataIds =  [
 
 startAt = datetime(2015, 10, 15)
 
-menorah = Menorah(dataIds, since=startAt, limit=500)
+menorah = Menorah(dataIds, "work/traffic", since=startAt)
 
-runNupic = False
+menorah.swarm(
+  swarmParams={"swarmSize": "medium"}
+)
 
-if runNupic:
-  menorah.swarm(
-    "work/traffic", 
-    swarmParams={"swarmSize": "small"}
-  )
-else:
-  menorah.runModel("work/traffic")
+menorah.runModel()

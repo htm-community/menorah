@@ -33,7 +33,7 @@ def create(streamIds, **kwargs):
   :param kwargs: Passed into Confluence constructor
   :return: (Confluence)
   """
-  print "Creating Confluence for the following streams:" \
+  print "Creating Confluence for the following RiverStreams:" \
         "\n\t%s" % ",\n\t".join([":".join(row) for row in streamIds])
   confluence = Confluence(streamIds, **kwargs)
   confluence.load()

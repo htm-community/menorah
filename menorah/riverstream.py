@@ -147,6 +147,11 @@ class RiverStream(object):
     return out
 
 
+  def reset(self):
+    self.load()
+    self._cursor = 0
+
+
   def getName(self):
     """
     Gets the id for this stream.

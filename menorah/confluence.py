@@ -33,11 +33,12 @@ class Confluence(object):
   """
 
 
-  def __init__(self, dataIds, since=None, until=None, limit=None):
+  def __init__(self, dataIds, since=None, until=None, limit=None, debug=False):
     self._dataIds = dataIds
     self._since = since
     self._until = until
     self._limit = limit
+    self._debug = debug
     self._streams = []
 
 
@@ -46,7 +47,7 @@ class Confluence(object):
 
 
   def _createStreams(self):
-    client = RiverViewClient(debug=False)
+    client = RiverViewClient(debug=self._debug)
     for dataId in self._dataIds:
       self._streams.append(
         RiverStream(
@@ -65,6 +66,10 @@ class Confluence(object):
   def load(self):
     self._createStreams()
     self._loadData()
+
+
+  def resetStreams(self):
+    [stream.reset() for stream in self._streams]
 
 
   def next(self):

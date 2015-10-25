@@ -37,7 +37,7 @@ def _createModel(modelParams, predictedField):
 
 
 
-def _getModelParamsFromName(workingDir):
+def _getModelParamsFromWorkDir(workingDir):
   modelParamsPath = os.path.join(workingDir, "model_params", "model_params.py")
   print "Importing model params from %s" % modelParamsPath
   myGlobals = {"MODEL_PARAMS": None}
@@ -132,15 +132,17 @@ def getRowHandler(workingDirPath, predictedField,
   
   if modelParams is None:
     print "Creating model from %s..." % workingDirPath
-    modelParams = _getModelParamsFromName(workingDirPath)
+    modelParams = _getModelParamsFromWorkDir(workingDirPath)
+  else:
+    print "Creating model from previously loaded model params."
 
   model = _createModel(modelParams, predictedField)
   
-  shifter = InferenceShifter()
-  if plot:
-    output = nupic_output.NuPICPlotOutput([workingDirPath])
-  else:
-    output = nupic_output.NuPICFileOutput([workingDirPath])
+  # shifter = InferenceShifter()
+  # if plot:
+  #   output = nupic_output.NuPICPlotOutput([workingDirPath])
+  # else:
+  #   output = nupic_output.NuPICFileOutput([workingDirPath])
   
   metricsManager = MetricsManager(
     createMetrics(predictedField), 
@@ -154,11 +156,8 @@ def getRowHandler(workingDirPath, predictedField,
   def handler(headers, row):
     global counter
     dataDict = dict(zip(headers, row))
-    # FIXME: this replacement is a bug.
-    dataDict["timestamp"] = dataDict["datetime"]
     result = model.run(dataDict)
     result.metrics = metricsManager.update(result)
-
     if counter % 100 == 0:
       print "Read %i lines..." % counter
       print ("After %i records, 1-step altMAPE=%f" % (counter,
@@ -168,6 +167,7 @@ def getRowHandler(workingDirPath, predictedField,
 
     counter += 1
     
+    # TODO: process output.
     # if plot:
     #   result = shifter.shift(result)
     # 

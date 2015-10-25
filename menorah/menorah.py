@@ -50,26 +50,34 @@ def createDir(path):
   return myPath
 
 
+def banner(text, ch="*", length=82):
+  spaced_text = " %s " % text
+  print("\n" + spaced_text.center(length, ch) + "\n")
+
+
 
 class Menorah(object):
 
 
-  def __init__(self, dataIds, since=None, limit=5000):
+  def __init__(self, dataIds, workingDir, since=None, limit=5000, debug=False):
     """
     Creates a new Menorah instance.
     :param dataIds: (list) Each data id in this list is a list of strings:
                     1. river name
                     2. stream name
                     3. field name
+    :param workingDir: path to store NuPIC artifacts
     :param since: (datetime) when to start the data fetch
     :param limit: (int) how many rows of data to get initially
     """
     self._streamIds = dataIds
+    self._workingDir = workingDir
     self._since = since
     self._limit = limit
     self._confluence = None
     self._modelParams = None
     self._predictedField = None
+    self._debug = debug
 
 
   def _createConfluence(self):
@@ -78,7 +86,8 @@ class Menorah(object):
     self._confluence = confluencefactory.create(
       self._streamIds,
       since=self._since,
-      limit=self._limit
+      limit=self._limit,
+      debug=self._debug
     )
     self._predictedField = self.getStreamIds()[0]
 
@@ -95,6 +104,12 @@ class Menorah(object):
     return self._confluence.getStreamIds()
 
 
+  def resetConfluence(self):
+    if self._confluence is None:
+      self._createConfluence()
+    self._confluence.resetStreams()
+
+
   def writeCsv(self, path):
     """
     Writes data one or many streams into one CSV file.
@@ -104,7 +119,7 @@ class Menorah(object):
     with open(path, "w") as outputFile:
       writer = csv.writer(outputFile)
       headers = self.getStreamIds()
-      fieldNames = ["datetime"] + headers
+      fieldNames = ["timestamp"] + headers
       flags = ["T"] + ["" for h in headers]
       types = ["datetime"] + ["float" for h in headers]
       writer.writerow(fieldNames)
@@ -164,10 +179,11 @@ class Menorah(object):
     """
     if not os.path.exists(workingDirPath):
       raise Exception("Working directory %s does not exist!" % workingDirPath)
+    banner("RUNNING SWARM")
     self._modelParams = swarm(workingDirPath)
 
 
-  def swarm(self, workingDirPath, predictedField=None, swarmParams=None):
+  def swarm(self, predictedField=None, swarmParams=None):
     """
     Runs a swarm on data and swarm description found within the given working
     directory. 
@@ -175,25 +191,25 @@ class Menorah(object):
     If no predictedField is provided, it is assumed that the first stream listed
     in the streamIds provided to the Menorah constructor is the predicted field.
     
-    :param workingDirPath: absolute or relative path to working directory
     :param predictedField: (string)
     :param swarmParams: (dict) overrides any swarm params
     :return:
     """
     self.prepareSwarm(
-      workingDirPath, predictedField=predictedField, swarmParams=swarmParams
+      self._workingDir, predictedField=predictedField, swarmParams=swarmParams
     )
-    self.runSwarm(workingDirPath)
+    self.runSwarm(self._workingDir)
 
 
-  def runModel(self, workingDirPath):
-    self._createConfluence()
+  def runModel(self):
+    self.resetConfluence()
     handler = modelrunner.getRowHandler(
-      workingDirPath, 
+      self._workingDir, 
       self._predictedField, 
       modelParams=self._modelParams, 
       plot=False
     )
+    banner("RUNNING MODEL")
     self.stream(handler)
 
 
