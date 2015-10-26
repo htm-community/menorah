@@ -70,7 +70,7 @@ class NuPICFileOutput(NuPICOutput):
     self.outputFiles = []
     self.outputWriters = []
     self.lineCounts = []
-    headerRow = ['timestamp', 'kw_energy_consumption', 'prediction']
+    headerRow = ['timestamp', 'value', 'prediction']
     for name in self.names:
       self.lineCounts.append(0)
       outputFileName = os.path.join(name, "predictions.csv")
@@ -130,7 +130,7 @@ class NuPICPlotOutput(NuPICOutput):
     for index in range(len(self.names)):
       self.graphs.append(fig.add_subplot(gs[index, 0]))
       plt.title(self.names[index])
-      plt.ylabel('KW Energy Consumption')
+      plt.ylabel(*args[0])
       plt.xlabel('Date')
     plt.tight_layout()
 

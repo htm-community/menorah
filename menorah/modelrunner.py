@@ -54,8 +54,6 @@ def getRowHandlers(workingDirPath, predictedField,
   else:
     print "Creating model from previously loaded model params."
 
-  import pprint
-  pprint.pprint(modelParams)
   model = _createModel(modelParams, predictedField)
   
   shifter = InferenceShifter()
@@ -100,4 +98,4 @@ def getRowHandlers(workingDirPath, predictedField,
   def whenDone():
     output.close()
 
-  return (handler, whenDone)
+  return handler, whenDone

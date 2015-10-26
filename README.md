@@ -54,3 +54,11 @@ menorah.runModel()
 ## View the predictions
 
 You can find a `predictions.csv` file in the working directory you specified. Or you can call `runModel(plot=True)` to plot with matplotlib.
+
+## Pro Tips
+
+- Once you've swarmed once on a particular experiment, you can comment out the call to `swarm()` on subsequent runs.
+
+## TODO
+
+- Save `Menorah` instances, which should save the underlying model and the data cursors so the may be continued from the point where they left off.
