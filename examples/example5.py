@@ -1,6 +1,5 @@
-# This example grabs several streams from River View and swarms over all of them
-# to predict energy demand, potentially using Airnow quality numbers to 
-# contribute to predictions (I know this is dumb, but it is just an example).
+# In an attempt to better predict the number of "tree debris" 311 calls in 
+# Chicago, this experiment incorporates data from local weather stations.
 
 from datetime import datetime
 
