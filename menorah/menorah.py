@@ -110,6 +110,17 @@ class Menorah(object):
     self._confluence.resetStreams()
 
 
+  def populateCsv(self):
+    """
+    Writes data from streams into CSV in working directory.
+    :return:
+    """
+    workingDirPath = createDir(self._workingDir)
+    csvPath = os.path.join(workingDirPath, "data.csv")
+    self.writeCsv(csvPath)
+    return csvPath, workingDirPath
+
+
   def writeCsv(self, path):
     """
     Writes data one or many streams into one CSV file.
@@ -121,12 +132,13 @@ class Menorah(object):
       headers = self.getStreamIds()
       fieldNames = ["timestamp"] + headers
       flags = ["T"] + ["" for h in headers]
-      types = ["datetime"] + ["float" for h in headers]
+      types = ["datetime"] + self._confluence.getDataTypes()
       writer.writerow(fieldNames)
       writer.writerow(types)
       writer.writerow(flags)
       for row in self._confluence:
         writer.writerow(row)
+    print "Wrote CSV data to %s." % path
 
 
   def writeSwarmDescription(self, csvPath, outPath, 
@@ -151,17 +163,14 @@ class Menorah(object):
       swarmOut.write(json.dumps(swarmDesc))
 
 
-  def prepareSwarm(self, workingDirPath, predictedField=None, swarmParams=None):
+  def prepareSwarm(self, predictedField=None, swarmParams=None):
     """
     Gathers data from streams into local CSV file, then creates a swarm 
     description for it. 
-    :param workingDirPath: Path to directory to write data and swarm files 
     :param predictedField: (string)
     :param swarmParams: (dict) overrides any swarm params
     """
-    workingDirPath = createDir(workingDirPath)
-    csvPath = os.path.join(workingDirPath, "data.csv")
-    self.writeCsv(csvPath)
+    csvPath, workingDirPath = self.populateCsv()
     swarmDescriptionPath = os.path.join(
       workingDirPath, "swarm_description.json"
     )
@@ -196,7 +205,7 @@ class Menorah(object):
     :return:
     """
     self.prepareSwarm(
-      self._workingDir, predictedField=predictedField, swarmParams=swarmParams
+      predictedField=predictedField, swarmParams=swarmParams
     )
     self.runSwarm(self._workingDir)
 

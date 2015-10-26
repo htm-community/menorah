@@ -95,3 +95,7 @@ class Confluence(object):
 
   def getStreamIds(self):
     return [str(stream) for stream in self._streams]
+
+
+  def getDataTypes(self):
+    return [stream.getDataType() for stream in self._streams]

@@ -35,7 +35,12 @@ class RiverStream(object):
     self._id = dataId
     self._client = client
     self._stream = self._client.river(riverName).stream(streamName)
-    self._field = dataId[2]
+    if dataId[2].startswith("aggregate="):
+      self._aggregate = dataId[2].split("=").pop()
+      self._field = "count"
+    else:
+      self._aggregate = None
+      self._field = dataId[2]
     self._dataHandle = None
     self._data = []
     self._headers = []
@@ -47,7 +52,7 @@ class RiverStream(object):
     self._lastValue = DEFAULT_LAST_VALUE
     self._min = None
     self._max = None
-    self._dataType = "int"
+    self._dataType = "float"
 
 
   def __len__(self):
@@ -78,7 +83,8 @@ class RiverStream(object):
     """
     print "Loading data for %s..." % self.getName()
     self._dataHandle = self._stream.data(
-      since=self._since, until=self._until, limit=self._limit
+      since=self._since, until=self._until, 
+      limit=self._limit, aggregate=self._aggregate
     )
     self._data = self._dataHandle.data()
     self._headers = self._dataHandle.headers()
@@ -183,6 +189,10 @@ class RiverStream(object):
       "minValue": self._min,
       "maxValue": self._max
     }
+
+
+  def getDataType(self):
+    return self._dataType
 
 
   def __str__(self):

@@ -1,5 +1,7 @@
 # Menorah
 
+> Menorah is a [NuPIC](http://github.com/numenta/nupic) experiment framework for [River View](http://data.numenta.org).
+
 ![Menorah logo](menorah.png)
 
 It's easy to run [NuPIC](http://github.com/numenta/nupic) on live real-world data with Menorah. Menorah's data is powered by [River View](http://data.numenta.org), which is a [NuPIC Community](http://github.com/nupic-community/river-view) temporal data store.
@@ -28,7 +30,7 @@ menorah.runModel()
 
 ## Working Directory
 
-Menorah needs a working directory, because NuPIC writes artifacts to the file system. Pass in a path to a working folder for menorah experiments.
+Menorah needs a working directory for its second constructor parameter, because NuPIC writes artifacts to the file system. Pass in a path to a working folder for menorah experiments.
 
 ## Run multiple fields
 
