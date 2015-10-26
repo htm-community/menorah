@@ -5,6 +5,10 @@
 ![Menorah logo](menorah.png)
 
 It's easy to run [NuPIC](http://github.com/numenta/nupic) on live real-world data with Menorah. Menorah's data is powered by [River View](http://data.numenta.org), which is a [NuPIC Community](http://github.com/nupic-community/river-view) temporal data store.
+
+## Installation
+
+    pip install menorah
  
 ## Data delivered directly to NuPIC
 
