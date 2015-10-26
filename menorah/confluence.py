@@ -79,7 +79,6 @@ class Confluence(object):
     # Peek at next item in each data stream and pick the earliest value to lead
     # the next row of data
     earliest = min([stream.getTime() for stream in self._streams])
-    # timeString = earliest.strftime(DATE_FORMAT)
     rowData = [stream.advance(earliest) for stream in self._streams]
     out = [earliest] + rowData
     return out

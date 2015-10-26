@@ -23,6 +23,7 @@ Provides two classes with the same signature for writing data out of NuPIC
 models.
 (This is a component of the One Hot Gym Prediction Tutorial.)
 """
+import os
 import csv
 from collections import deque
 from abc import ABCMeta, abstractmethod
@@ -36,7 +37,7 @@ try:
 except ImportError:
   pass
 
-WINDOW = 100
+WINDOW = 300
 
 
 class NuPICOutput(object):
@@ -72,7 +73,7 @@ class NuPICFileOutput(NuPICOutput):
     headerRow = ['timestamp', 'kw_energy_consumption', 'prediction']
     for name in self.names:
       self.lineCounts.append(0)
-      outputFileName = "%s_out.csv" % name
+      outputFileName = os.path.join(name, "predictions.csv")
       print "Preparing to output %s data to %s" % (name, outputFileName)
       outputFile = open(outputFileName, "w")
       self.outputFiles.append(outputFile)

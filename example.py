@@ -1,12 +1,13 @@
 from menorah import Menorah
 
-sources =  [
+dataIds =  [
+  # http://data.numenta.org/ercot-demand/system_wide_demand/data.html
   ["ercot-demand", "system_wide_demand", "Demand"],
-  ["airnow", "Austin, TX", "Ozone"],
-  ["airnow", "Beaumont-Port Arthur, TX", "Ozone"],
-  ["airnow", "Brownsville-McAllen, TX", "Ozone"],
 ]
 
-menorah = Menorah(sources, "work/traffic")
+menorah = Menorah(dataIds, "work/one-field")
 menorah.swarm()
 menorah.runModel()
+
+# Find your predictions in "work/one-field/predictions.csv"
+

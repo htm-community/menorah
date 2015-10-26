@@ -201,25 +201,28 @@ class Menorah(object):
     self.runSwarm(self._workingDir)
 
 
-  def runModel(self):
+  def runModel(self, plot=False):
     self.resetConfluence()
-    handler = modelrunner.getRowHandler(
+    (handler, whenDone) = modelrunner.getRowHandlers(
       self._workingDir, 
       self._predictedField, 
       modelParams=self._modelParams, 
-      plot=False
+      plot=plot
     )
     banner("RUNNING MODEL")
-    self.stream(handler)
+    self.stream(handler, whenDone)
 
 
-  def stream(self, handler):
+  def stream(self, handler, whenDone=None):
     """
     Fetches data from river streams and feeds them into the given function.
     :param handler: (function) passed headers [list] and row [list] of the data
                     for one time step, for every row of data
     """
     self._createConfluence()
-    headers = ["datetime"] + self.getStreamIds()
+    headers = ["timestamp"] + self.getStreamIds()
     for row in self._confluence:
       handler(headers, row)
+    
+    if whenDone is not None:
+      whenDone()

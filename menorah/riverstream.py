@@ -23,6 +23,7 @@ from datetime import datetime
 
 
 DEFAULT_LAST_VALUE = 0
+TIMESTAMP_FIELD = "datetime"
 
 
 class RiverStream(object):
@@ -166,7 +167,7 @@ class RiverStream(object):
     :return: (datetime)
     """
     headers = self._headers
-    timeStringIndex = headers.index("datetime")
+    timeStringIndex = headers.index(TIMESTAMP_FIELD)
     timeString = self.peek()[timeStringIndex]
     return  datetime.strptime(timeString, "%Y/%m/%d %H:%M:%S")
 

@@ -49,8 +49,6 @@ menorah.swarm()
 menorah.runModel()
 ```
 
-# Where's the Output?
+## View the predictions
 
-Writing output to a file would be nice.
-
-Plotting output would be better.
+You can find a `predictions.csv` file in the working directory you specified. Or you can call `runModel(plot=True)` to plot with matplotlib.
