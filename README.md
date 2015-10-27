@@ -61,6 +61,7 @@ You can find a `predictions.csv` file in the working directory you specified. Or
 
 ## Pro Tips
 
+- For `geospatial` data streams like [portland-911](http://data.numenta.org/portland-911/portland-911/data.html), you can aggregate counts of events by providing an *aggregation string* instead of a `field` name. See [example5.py](examples/example5.py) and `aggregate=1 day` in the `sources` list. 
 - Once you've swarmed once on a particular experiment, you can comment out the call to `swarm()` on subsequent runs.
 
 ## TODO
