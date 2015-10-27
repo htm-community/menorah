@@ -28,6 +28,7 @@ except ImportError:
 sdict = {}
 
 execfile('menorah/version.py', {}, sdict)
+version = sdict["version"]
 
 def findRequirements():
   """
@@ -43,14 +44,14 @@ def findRequirements():
 sdict.update({
     'name' : 'menorah',
     'description' : 'Converges many River View Streams into a NuPIC HTM model',
-    'url': 'http://github.com/rhyolight/menorah',
+    'url': 'https://github.com/nupic-community/menorah',
     'author' : 'Matthew Taylor',
     'author_email' : 'matt@numenta.org',
     'keywords' : ['river', 'view', 'client', 'htm', 'nupic'],
     'license' : 'AGPL',
     'install_requires': findRequirements(),
-    # 'test_suite': 'tests.unit',
     'packages' : ['menorah'],
+    'download_url': 'https://github.com/nupic-community/menorah/archive/' + version + '.zip',
     'classifiers' : [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
