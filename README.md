@@ -8,6 +8,8 @@ It's easy to run [NuPIC](http://github.com/numenta/nupic) on live real-world dat
 
 ## Installation
 
+First, you must install [NuPIC](http://github.com/numenta/nupic) however you wish. Then you can run:
+
     pip install menorah
  
 ## Data delivered directly to NuPIC
