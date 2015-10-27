@@ -18,5 +18,5 @@ menorah = Menorah(
   since=datetime(2015, 5, 20)
 )
 
-menorah.swarm()
+menorah.swarm(swarmParams={"swarmSize":"large"})
 menorah.runModel(plot=True)

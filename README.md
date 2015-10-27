@@ -29,7 +29,7 @@ sources = [
   ["ercot-demand", "system_wide_demand", "Demand"],
 ]
 
-menorah = Menorah(sources, "experiments/")
+menorah = Menorah(sources, "experiments/ercot")
 menorah.swarm()
 menorah.runModel()
 ```
@@ -40,21 +40,29 @@ Menorah needs a working directory for its second constructor parameter, because 
 
 ## Run multiple fields
 
-I recommend running less than 8 fields in a single model, but you can configure as many as you wish. 
+I recommend running less than 8 fields in a single model, but you can configure as many as you wish. The example below attempts to better predict the number of "tree debris" 311 calls in Chicago and incorporates data from local weather stations. It also shows an example of aggregating a geospatial data feed to get event counts within an aggregation period. 
 
 ```python
+from datetime import datetime
+
 from menorah import Menorah
 
 sources =  [
-  ["ercot-demand", "system_wide_demand", "Demand"],
-  ["airnow", "Austin, TX", "Ozone"],
-  ["airnow", "Beaumont-Port Arthur, TX", "Ozone"],
-  ["airnow", "Brownsville-McAllen, TX", "Ozone"],
+  ["chicago-311", "Tree Debris", "aggregate=1 day"],
+  ["chicago-beach-weather", "Foster Weather Station", "humidity"],
+  ["chicago-beach-weather", "Foster Weather Station", "interval_rain"],
+  ["chicago-beach-water-quality", "Osterman Beach", "wave_height"],
 ]
 
-menorah = Menorah(sources, "work/traffic")
-menorah.swarm()
-menorah.runModel()
+menorah = Menorah(
+  sources,
+  "work/example5-multifield-aggregated", 
+  since=datetime(2015, 5, 20)
+)
+
+menorah.swarm(swarmParams={"swarmSize":"large"})
+menorah.runModel(plot=True)
+
 ```
 
 ## View the predictions
