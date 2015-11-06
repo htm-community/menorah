@@ -219,7 +219,7 @@ class Menorah(object):
       plot=plot
     )
     banner("RUNNING MODEL")
-    self.stream(handler, whenDone)
+    return self.stream(handler, whenDone)
 
 
   def stream(self, handler, whenDone=None):
@@ -234,4 +234,4 @@ class Menorah(object):
       handler(headers, row)
     
     if whenDone is not None:
-      whenDone()
+      return whenDone()

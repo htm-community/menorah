@@ -9,6 +9,6 @@ sources =  [
   ["portland-911", "portland-911", "aggregate=15 minutes"],
 ]
 
-menorah = Menorah(sources, "work/example1-aggregated", since=datetime(2015, 7, 10))
+menorah = Menorah(sources, "work/example3-aggregated", since=datetime(2015, 7, 10))
 menorah.swarm()
 menorah.runModel(plot=True)

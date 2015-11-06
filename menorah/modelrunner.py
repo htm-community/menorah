@@ -97,5 +97,6 @@ def getRowHandlers(workingDirPath, predictedField,
 
   def whenDone():
     output.close()
+    return model, metricsManager
 
   return handler, whenDone

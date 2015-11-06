@@ -11,8 +11,8 @@ dataIds =  [
 ]
 
 menorah = Menorah(dataIds, "work/example1-one-field")
-menorah.swarm()
-menorah.runModel()
+# menorah.swarm()
+menorah.runModel(plot=True)
 
-# Find your predictions in "work/one-field/predictions.csv"
+# Find your predictions in "work/example1-one-field/predictions.csv"
 

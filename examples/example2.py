@@ -11,6 +11,6 @@ sources =  [
   ["airnow", "Brownsville-McAllen, TX", "Ozone"],
 ]
 
-menorah = Menorah(sources, "work/example1-multifield")
+menorah = Menorah(sources, "work/example2-multifield")
 menorah.swarm()
 menorah.runModel(plot=True)
