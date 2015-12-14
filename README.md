@@ -4,7 +4,9 @@
 
 ![Menorah logo](menorah.png)
 
-It's easy to run [NuPIC](http://github.com/numenta/nupic) on live real-world data with Menorah. Menorah's data is powered by [River View](http://data.numenta.org), which is a [NuPIC Community](http://github.com/nupic-community/river-view) temporal data store.
+## Goal
+
+This project aims to make it easy to feed multiple streams of data into a [NuPIC](http://github.com/numenta/nupic) HTM model using live data already availale in [River View](http://data.numenta.org). With a simple python script, you can run and plot predictions for River View data using many input streams that might contribute to the target prediction.
 
 ## Tutorial
 
